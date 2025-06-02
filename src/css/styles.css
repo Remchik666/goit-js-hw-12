@@ -53,7 +53,8 @@ button[type="submit"] {
   transition: background-color ease-out 250ms;
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover,
+.more-btn:hover {
   background-color: #6c8cff;
 }
 
@@ -66,11 +67,6 @@ button[type="submit"]:hover {
   border-radius: 50%;
   position: relative;
   animation: rotate 1s linear infinite
-}
-
-.loader.visible {
-  display: block;
-  opacity: 1;
 }
 
 .loader::before,
@@ -126,12 +122,6 @@ button[type="submit"]:hover {
   flex-basis: calc((100% - 48px) / 3);
 }
 
-.loader-container {
-  display: none;
-  justify-content: center;
-  align-items: center;
-}
-
 .img-container {
   position: relative;
   overflow: hidden;
@@ -164,3 +154,43 @@ button[type="submit"]:hover {
   font-family: "Montserrat", sans-serif;
 }
 
+.more-btn {
+  opacity: 0;
+  display: none;
+  align-self: center;
+  width: 125px;
+  height: 40px;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: #4e75ff;
+  border: none;
+  color: #fff;
+  transition: background-color ease-out 250ms;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 16px;
+}
+
+.more-text {
+  opacity: 0;
+  display: none;
+  align-self: center;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 16px;
+}
+
+.loader.visible, 
+.more-text.visible, 
+.more-btn.visible {
+  display: block;
+  opacity: 1;
+}
