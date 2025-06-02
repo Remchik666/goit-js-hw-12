@@ -9,6 +9,8 @@ const loadMoreBtn = document.querySelector(".more-btn");
 
 let currentPage = 1;
 let currentQuery = "";
+let totalDisplayed = 0;
+let availableImages = 0;
 
 form.addEventListener("submit", async event => {
     event.preventDefault();
@@ -25,15 +27,16 @@ form.addEventListener("submit", async event => {
     }
 
     currentPage = 1;
+    totalDisplayed = 0;
     clearGallery();
     hideMoreButton();
     showLoader();
 
     try {
-        const images = await getImagesByQuery(currentQuery, currentPage);
+        const data = await getImagesByQuery(currentQuery, currentPage);
         hideLoader();
 
-        if (images.length === 0) {
+        if (data.hits.length === 0) {
             iziToast.warning({
                 title: "No results",
                 message: "Sorry, no images match your search query. Try again!",
@@ -42,12 +45,19 @@ form.addEventListener("submit", async event => {
             return;
         }
 
-        createGallery(images);
+        availableImages = Math.min(data.totalHits, 500);
+        createGallery(data.hits);
+        totalDisplayed += data.hits.length
 
-        if (images.length === 15) {
-            showMoreButton();
-        } else { 
+        if (totalDisplayed >= availableImages) {
+            iziToast.info({
+                title: "End of results",
+                message: "No more images found.",
+                position: "topRight",
+            });
             hideMoreButton();
+        } else {
+            showMoreButton();
         }
     } catch (error) {
         hideLoader();
@@ -65,10 +75,10 @@ loadMoreBtn.addEventListener("click", async () => {
     showMoreText();
     
     try {
-        const images = await getImagesByQuery(currentQuery, currentPage);
+        const data = await getImagesByQuery(currentQuery, currentPage);
         hideMoreText();
 
-        if (images.length === 0) {
+        if (data.hits.length === 0) {
             iziToast.info({
                 title: "End of results",
                 message: "No more images found.",
@@ -78,17 +88,25 @@ loadMoreBtn.addEventListener("click", async () => {
             return;
         }
 
-        appendGallery(images);
-        const { height: cardHeight } = document
-            .querySelector(".gallery")
-            .firstElementChild.getBoundingClientRect();
-        window.scrollBy({
-            top: cardHeight * 2,
-            behavior: "smooth",
-        });
-        if (images.length < 15) {
+        appendGallery(data.hits);
+        totalDisplayed += data.hits.length;
+        const firstCard = document.querySelector(".gallery").firstElementChild;
+        if (firstCard) {
+            const { height: cardHeight } = firstCard.getBoundingClientRect();
+            window.scrollBy({
+                top: cardHeight * 2,
+                behavior: "smooth"
+            });
+        }
+
+        if (totalDisplayed >= availableImages) {
+            iziToast.info({
+                title: "End of results",
+                message: "No more images found.",
+                position: "topRight",
+            });
             hideMoreButton();
-        } else { 
+        } else {
             showMoreButton();
         }
     } catch (error) {
@@ -100,3 +118,4 @@ loadMoreBtn.addEventListener("click", async () => {
         });
     }
 });
+
